@@ -138,3 +138,9 @@ variable "ai_adaptive_sampling" {
   type        = bool
   default     = true
 } 
+
+variable "apim_sku" {
+  description = "APIM SKU. Number after the underscore determines the number of gateway units. For Premium (= Production), at least 2 units should be deploy for AZ-redundancy"
+  type        = string
+  default     = "Developer_1"
+}
