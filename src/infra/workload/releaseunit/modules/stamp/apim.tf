@@ -7,7 +7,7 @@ resource "azurerm_api_management" "stamp" {
     azurerm_network_security_rule.apim_allow_inbound_apim_control
   ]
 
-  name                = "${local.prefix}-${local.location_short}-apim"
+  name                = "${local.prefix_with_location}-apim"
   location            = azurerm_resource_group.stamp.location
   resource_group_name = azurerm_resource_group.stamp.name
   publisher_name      = "Microsoft"
@@ -209,4 +209,22 @@ resource "azurerm_monitor_diagnostic_setting" "apim" {
       }
     }
   }
+}
+
+# Static Public IP for APIM
+# Since this is the connected option, we do not intend to have a public IP address on APIM
+# As soon as we can directly integrate APIM privately to FD, we will remove it. 
+
+resource "azurerm_public_ip" "apim" {
+  name                = "${local.prefix_with_location}-apim-pip"
+  location            = azurerm_resource_group.stamp.location
+  resource_group_name = azurerm_resource_group.stamp.name
+  sku                 = "Standard"
+  allocation_method   = "Static"
+
+  domain_name_label = "${local.prefix_with_location}-apim"
+
+  zones = ["1", "2", "3"]
+
+  tags = var.default_tags
 }
