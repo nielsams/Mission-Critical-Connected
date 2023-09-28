@@ -11,7 +11,7 @@ resource "azurerm_api_management" "stamp" {
   location            = azurerm_resource_group.stamp.location
   resource_group_name = azurerm_resource_group.stamp.name
   publisher_name      = "Microsoft"
-  publisher_email     = var.contact_email
+  publisher_email     = "noreply@microsoft.com"
 
   virtual_network_type = "External"
 
