@@ -29,6 +29,10 @@ module "subnet_addrs" {
     {
       name     = "aks-pl"
       new_bits = 29 - local.netmask # Subnet for Private Link service towards the AKS Load Balancer
+    },
+    {
+      name     = "apim"
+      new_bits = 28 - local.netmask # Subnet for API Management
     }
   ]
 }
@@ -109,4 +113,85 @@ resource "azurerm_subnet" "aks_pl" {
 resource "azurerm_subnet_network_security_group_association" "aks_pl_default_nsg" {
   subnet_id                 = azurerm_subnet.aks_pl.id
   network_security_group_id = azurerm_network_security_group.default.id
+}
+
+# See here for required NSG rules for APIM:
+# https://docs.microsoft.com/en-us/azure/api-management/api-management-using-with-vnet?tabs=stv2#configure-nsg-rules
+
+# Subnet for APIM
+resource "azurerm_subnet" "apim" {
+  name                 = "apim-snet"
+  resource_group_name  = local.vnet_resource_group_name
+  virtual_network_name = data.azurerm_virtual_network.stamp.name
+  address_prefixes     = [module.subnet_addrs.network_cidr_blocks["apim"]]
+  # The following service endpoints are required by APIM control plane
+  service_endpoints = [
+    "Microsoft.Storage",
+    "Microsoft.KeyVault",
+    "Microsoft.Sql",
+    "Microsoft.EventHub",
+    "Microsoft.ServiceBus"
+  ]
+}
+
+# Network security group for APIM
+resource "azurerm_network_security_group" "apim" {
+  name                = "${local.prefix_with_location}-apim-nsg"
+  location            = azurerm_resource_group.stamp.location
+  resource_group_name = local.vnet_resource_group_name
+
+  # not specifying any security_rules {} will create Azure's default set of NSG rules
+  # it allows intra-vnet communication and outbound public internet access
+
+  tags = var.default_tags
+}
+
+# Allow HTTPS inbound to APIM
+resource "azurerm_network_security_rule" "apim_allow_inbound_https" {
+  name                        = "Allow_Inbound_HTTPS"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_ranges     = ["443"]
+  source_address_prefix       = "Internet"
+  destination_address_prefix  = "VirtualNetwork"
+  resource_group_name         = local.vnet_resource_group_name
+  network_security_group_name = azurerm_network_security_group.apim.name
+}
+
+# Allow inbound traffic from LB to APIM (required for Premium tier)
+resource "azurerm_network_security_rule" "apim_allow_inbound_lb" {
+  name                        = "Allow_Inbound_LB"
+  priority                    = 150
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_ranges     = ["6390"]
+  source_address_prefix       = "AzureLoadBalancer"
+  destination_address_prefix  = "VirtualNetwork"
+  resource_group_name         = local.vnet_resource_group_name
+  network_security_group_name = azurerm_network_security_group.apim.name
+}
+
+# Allow HTTPS inbound to APIM
+resource "azurerm_network_security_rule" "apim_allow_inbound_apim_control" {
+  name                        = "Allow_Inbound_APIM_Control_Plane"
+  priority                    = 200
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_ranges     = ["3443"]
+  source_address_prefix       = "ApiManagement"
+  destination_address_prefix  = "VirtualNetwork"
+  resource_group_name         = local.vnet_resource_group_name
+  network_security_group_name = azurerm_network_security_group.apim.name
+}
+
+resource "azurerm_subnet_network_security_group_association" "apim_nsg" {
+  subnet_id                 = azurerm_subnet.apim.id
+  network_security_group_id = azurerm_network_security_group.apim.id
 }
