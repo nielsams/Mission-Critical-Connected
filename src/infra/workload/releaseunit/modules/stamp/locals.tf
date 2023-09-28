@@ -17,4 +17,7 @@ locals {
   vnet_name                = local.vnet_name_and_rg.vnet
 
   aks_internal_lb_ip_address = cidrhost(azurerm_subnet.aks_lb.address_prefixes[0], 5) # 5th IP in the subnet as the previous ones are reserved by Azure
+
+  apim_tier  = split("_", var.apim_sku)[0] # extract tier from the sku name
+  apim_units = split("_", var.apim_sku)[1] # extract tier from the sku name
 }
