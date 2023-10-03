@@ -17,6 +17,7 @@ module "stamp" {
   monitoring_resource_group_name = var.monitoring_resource_group_name
   cosmosdb_account_name          = var.cosmosdb_account_name
   cosmosdb_database_name         = var.cosmosdb_database_name
+  frontdoor_id_header            = var.frontdoor_id_header
   global_storage_account_name    = var.global_storage_account_name
 
   azure_monitor_action_group_resource_id = var.azure_monitor_action_group_resource_id
