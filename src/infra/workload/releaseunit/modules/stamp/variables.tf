@@ -144,3 +144,8 @@ variable "apim_sku" {
   type        = string
   default     = "Developer_1"
 }
+
+variable "frontdoor_id_header" {
+  description = "Front Door ID to be used in the header check"
+  type        = string
+}

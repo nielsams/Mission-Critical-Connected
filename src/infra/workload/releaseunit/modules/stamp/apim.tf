@@ -38,7 +38,7 @@ resource "azurerm_api_management_backend" "aks_cluster" {
   resource_group_name = azurerm_resource_group.stamp.name
   api_management_name = azurerm_api_management.stamp.name
   protocol            = "http"
-  url                 = "https://${aks_internal_lb_ip_address}/"
+  url                 = "https://${local.aks_internal_lb_ip_address}/"
 
   tls {
     validate_certificate_chain = var.custom_dns_zone != "" # Do certificate checking only if we use a custom domain (for which we can request proper certifcates)
