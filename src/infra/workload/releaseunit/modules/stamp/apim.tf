@@ -203,10 +203,10 @@ resource "azurerm_monitor_diagnostic_setting" "apim" {
       category = entry.value
       enabled  = true
 
-      retention_policy {
-        enabled = true
-        days    = 30
-      }
+#      retention_policy {
+#        enabled = true
+#        days    = 30
+#      }
     }
   }
 }
