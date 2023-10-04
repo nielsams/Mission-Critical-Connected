@@ -176,7 +176,7 @@ data "azurerm_monitor_diagnostic_categories" "apim" {
 }
 
 resource "azurerm_monitor_diagnostic_setting" "apim" {
-  name                       = "apimladiagnostics"
+  name                       = "apimladiag"
   target_resource_id         = azurerm_api_management.stamp.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.stamp.id
 
@@ -188,10 +188,10 @@ resource "azurerm_monitor_diagnostic_setting" "apim" {
       category = entry.value
       enabled  = true
 
-      retention_policy {
-        enabled = true
-        days    = 30
-      }
+#      retention_policy {
+#      enabled = true
+#      days    = 30
+#      }
     }
   }
 
