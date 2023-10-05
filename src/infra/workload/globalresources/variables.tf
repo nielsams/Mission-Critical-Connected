@@ -101,8 +101,8 @@ variable "law_daily_cap_gb" {
 variable "backends_BackendApis" {
   type = list(object({
     address                = string
-    privatelink_service_id = string
-    privatelink_location   = string
+  # privatelink_service_id = string # Commented out while we access APIM publicly
+  # privatelink_location   = string
     weight                 = number
     enabled                = bool
   }))
