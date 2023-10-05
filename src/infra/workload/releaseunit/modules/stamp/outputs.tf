@@ -80,3 +80,8 @@ output "healthservice_managed_identity_client_id" {
 output "backgroundprocessor_managed_identity_client_id" {
   value = azurerm_user_assigned_identity.backgroundprocessor.client_id
 }
+
+# The gateway fqdn of the APIM instance
+output "apim_gateway_url" {
+  value = azurerm_api_management.stamp.gateway_url
+}
