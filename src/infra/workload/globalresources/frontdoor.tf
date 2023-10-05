@@ -174,14 +174,15 @@ resource "azurerm_cdn_frontdoor_origin" "backendapi" {
   enabled                        = each.value.enabled
   certificate_name_check_enabled = true
 
-  dynamic "private_link" {
-    for_each = each.value.privatelink_service_id != "" ? [1] : [] # a workaround to make a nested block optional
-    content {
-      request_message        = "Request access for CDN Frontdoor Private Link Origin for prefix ${local.prefix}"
-      location               = each.value.privatelink_location
-      private_link_target_id = each.value.privatelink_service_id
-    }
-  }
+# Commenting this out while we access APIM publicly
+#  dynamic "private_link" {
+#    for_each = each.value.privatelink_service_id != "" ? [1] : [] # a workaround to make a nested block optional
+#    content {
+#      request_message        = "Request access for CDN Frontdoor Private Link Origin for prefix ${local.prefix}"
+#      location               = each.value.privatelink_location
+#      private_link_target_id = each.value.privatelink_service_id
+#    }
+#  }
 
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backendapis.id
 
