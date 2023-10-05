@@ -12,6 +12,7 @@ output "stamp_properties" {
     aks_node_resourcegroup_name                    = instance.aks_node_resourcegroup_name
     aks_ingress_privatelink_subnet_name            = instance.aks_ingress_privatelink_subnet_name
     aks_ingress_loadbalancer_subnet_name           = instance.aks_ingress_loadbalancer_subnet_name
+    apim_gateway_url                               = instance.apim_gateway_url
     public_storage_account_name                    = instance.public_storage_account_name
     storage_web_host                               = instance.public_storage_static_web_host
     catalogservice_managed_identity_client_id      = instance.catalogservice_managed_identity_client_id
