@@ -31,6 +31,11 @@ resource "azurerm_api_management" "stamp" {
   }
 
   tags = var.default_tags
+
+  timeouts {
+    create = "90m"
+    update = "30m"
+  }
 }
 
 resource "azurerm_api_management_backend" "aks_cluster" {
