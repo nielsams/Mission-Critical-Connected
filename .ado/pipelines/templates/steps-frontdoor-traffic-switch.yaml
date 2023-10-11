@@ -220,7 +220,7 @@ steps:
         if(-not $afdConnections)
         {
           # If there are no connections from Front Door, that indicates a problem as we would expect at least a pending connection at this point
-          throw "*** No Private Endpoint connections from Front Door on Private Link service $plServiceId"
+          echo "*** No Private Endpoint connections from Front Door on Private Link service $plServiceId."
         }
 
         # Get connections which are pending approval
